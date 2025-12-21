@@ -1,16 +1,46 @@
-# React + Vite
+# ChefChoice
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ChefChoice is a full-stack restaurant web application built as a university project, designed in a **production-style** architecture with a focus on clean UI, realistic features, and professional code structure.
 
-Currently, two official plugins are available:
+This monorepo contains both:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React (Vite) single-page application
+- **Backend:** Node.js + Express REST API with MySQL and session-based authentication
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the ESLint configuration
+### Frontend (React + Vite)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Modern single-page application using **React** and **React Router**
+- **Custom UI/UX** (no UI libraries) with responsive layout
+- **Cart** using Context API
+- **Meal Builder** to compose a custom meal from mains, sides, and drinks
+- **Auth pages** (Login / Signup) connected to backend
+- **Contact form** (demo / or API-backed)
+- Smooth navigation and polished design suitable for portfolio / CV
+
+### Backend (Node.js + Express)
+
+- REST API with the following route groups:
+
+  - `/api/auth` – register, login, logout, session handling
+  - `/api/dishes` – list menu items, fetch single dish, etc.
+  - `/api/orders` – create orders, store in database
+  - `/api/contact` – store contact messages
+
+- **Session-based authentication** (no JWT) using cookies
+- Custom **middleware** for auth and error handling
+- Centralised DB config and structured routes
+
+### Database (MySQL)
+
+- Database: `chefchoice`
+- Core tables (examples):
+  - `users`
+  - `dishes`
+  - `orders`
+  - `order_items`
+  - `contact_messages`
+- Backend already connected and inserting data (orders, users, etc.)
