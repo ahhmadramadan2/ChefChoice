@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { dishes } from "../data/dishes";
+import { dishes } from "../mock/dishes_mock";
 import DishCard from "../components/DishCard";
 
 import heroBb from "../assets/NB.jpg"; 

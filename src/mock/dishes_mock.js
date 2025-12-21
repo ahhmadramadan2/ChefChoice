@@ -1,3 +1,5 @@
+//  mock data used during early development in phase 1
+// Replaced by backend API integration
 
 
 export const dishes = [

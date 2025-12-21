@@ -1,77 +1,95 @@
-
 import { Link } from "react-router-dom";
 
 function Services() {
+  const features = [
+    {
+      title: "Smart Recommendations",
+      icon: "✨",
+      text:
+        "The home page shows recommendations based on the time of day (lighter options in the morning, heavier meals at night).",
+    },
+    {
+      title: "Menu Filters & Search",
+      icon: "🔎",
+      text:
+        "Filter dishes by category, price, and tags like Vegan, Vegetarian and Gluten-free. You can also search by name.",
+    },
+    {
+      title: "Custom Meal Builder",
+      icon: "🍱",
+      text:
+        "Build a combo by choosing a main, side, and drink. Total price and calories update instantly.",
+    },
+    {
+      title: "Cart with Order Timeline",
+      icon: "🛒",
+      text:
+        "The cart shows selected items and total price, plus a simple timeline that simulates order progress.",
+    },
+    {
+      title: "Context State + localStorage",
+      icon: "🧠",
+      text:
+        "Cart state is shared using React Context API, and persists after refresh using localStorage.",
+    },
+    {
+      title: "Responsive UI",
+      icon: "📱",
+      text:
+        "Layout adapts to mobile and desktop. Grid, filters and navigation are tested across screen sizes.",
+    },
+  ];
+
   return (
-    <section className="page">
+    <section className="page services-page">
       <div className="container">
-        <h1>Features</h1>
-        <p className="section-subtitle">
-          ChefChoice is more than a simple menu. It includes small smart features
-          to improve the user experience.
-        </p>
-
-        <div className="grid">
-          <div className="dish-card">
-            <h3>Smart Recommendations</h3>
-            <p>
-              The home page shows recommendations based on the time of day.
-              For example, breakfast dishes in the morning and heavier meals at night.
+        {/* Hero */}
+        <div className="services-hero">
+          <div>
+            <h1>Features</h1>
+            <p className="services-hero-sub">
+              ChefChoice is more than a simple menu — it includes small smart features
+              to improve the user experience.
             </p>
           </div>
 
-          <div className="dish-card">
-            <h3>Menu Filters & Search</h3>
-            <p>
-              Users can filter dishes by category, price, and diet tags such as
-              Vegan, Vegetarian and Gluten-free. They can also search by name.
-            </p>
-          </div>
-
-          <div className="dish-card">
-            <h3>Custom Meal Builder</h3>
-            <p>
-              The Meal Builder page lets the user choose a main, side, and drink.
-              The website calculates the total price and calories for the combo in real time.
-            </p>
-          </div>
-
-          <div className="dish-card">
-            <h3>Cart with Order Timeline</h3>
-            <p>
-              The cart page shows all selected items and the total. There is also a simple
-              order timeline that simulates the order moving from Cart to Ready.
-            </p>
-          </div>
-
-          <div className="dish-card">
-            <h3>State Management with Context</h3>
-            <p>
-              The cart state is shared across the whole website using the React Context API.
-              Items stay in the cart even after a page refresh thanks to localStorage.
-            </p>
-          </div>
-
-          <div className="dish-card">
-            <h3>Responsive Design</h3>
-            <p>
-              The layout adjusts to different screen sizes. The grid and navigation are
-              tested on both desktop and mobile resolutions.
-            </p>
-          </div>
-        </div>
-
-        <div className="section" style={{ marginTop: "2rem" }}>
-          <h2>Try It Out</h2>
-          <p>
-            You can start exploring the app from the menu or build a custom meal.
-          </p>
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          {/* <div className="services-hero-actions">
             <Link to="/menu" className="btn-primary">
               Go to Menu
             </Link>
             <Link to="/builder" className="btn-outline">
               Open Meal Builder
+            </Link>
+          </div> */}
+        </div>
+
+        {/* Feature grid */}
+        <div className="features-grid">
+          {features.map((f) => (
+            <div className="feature-card" key={f.title}>
+              <div className="feature-icon" aria-hidden="true">
+                {f.icon}
+              </div>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="services-cta">
+          <h2>Try it out</h2>
+          <p className="section-subtitle">
+            Start from the menu or build a combo meal.
+          </p>
+          <div className="services-cta-actions">
+            <Link to="/menu" className="btn-primary">
+              Browse Menu
+            </Link>
+            <Link to="/builder" className="btn-outline">
+              Build a Meal
             </Link>
           </div>
         </div>
