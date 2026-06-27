@@ -1,28 +1,23 @@
-// src/db.js
-import mysql from "mysql2/promise";
+import pg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-export const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASS || "",       // matches DB_PASS in .env
-  database: process.env.DB_NAME || "chefchoice",
-  waitForConnections: true,
-  connectionLimit: 10,
+const { Pool } = pg;
+
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // required for Supabase
+  max: 10,
 });
 
-// Optional: connection test (helps debugging)
-async function testConnection() {
+// Connection test
+(async () => {
   try {
-    const conn = await pool.getConnection();
-    console.log("✅ MySQL connected successfully");
-    conn.release();
+    const client = await pool.connect();
+    console.log("✅ Postgres connected");
+    client.release();
   } catch (err) {
-    console.error("❌ MySQL connection failed:", err.message);
+    console.error("❌ Postgres connection failed:", err.message);
   }
-}
-
-testConnection();
+})();
