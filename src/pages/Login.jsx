@@ -1,13 +1,11 @@
-
-
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
-const API = import.meta.env.VITE_API_URL;
-
-export default function Login({ setUser }) {
+export default function Login() {
   const nav = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
@@ -17,15 +15,9 @@ export default function Login({ setUser }) {
     e.preventDefault();
     setMsg("");
     setLoading(true);
-
     try {
-      const res = await axios.post(
-        `${API}/api/auth/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      if (typeof setUser === "function") setUser(res.data);
-
+      const res = await api.post("/api/auth/login", { email, password });
+      login(res.data); // { token, user }
       nav("/");
     } catch (err) {
       setMsg(err.response?.data?.message || "Login failed");
@@ -47,28 +39,14 @@ export default function Login({ setUser }) {
         <form onSubmit={onSubmit} className="auth-form">
           <div className="field">
             <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              required
-            />
+            <input id="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              type="email" autoComplete="email" placeholder="you@example.com" required />
           </div>
 
           <div className="field">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              required
-            />
+            <input id="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              type="password" autoComplete="current-password" placeholder="••••••••" required />
           </div>
 
           <button className="btn-primary auth-submit" type="submit" disabled={loading}>
@@ -77,7 +55,7 @@ export default function Login({ setUser }) {
         </form>
 
         <p className="auth-switch">
-          Don’t have an account? <Link to="/signup">Create one</Link>
+          Don't have an account? <Link to="/signup">Create one</Link>
         </p>
       </div>
     </section>

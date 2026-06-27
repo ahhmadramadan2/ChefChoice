@@ -610,14 +610,33 @@ img { border-radius: 0; max-width: 100%; display: block; }
 }
 
 /* Timeline */
-.timeline { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px 4px;
+  flex-wrap: wrap;
+}
 .timeline-step {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 0.8rem;
-  color: var(--muted);
+  gap: 8px;
+  min-width: 70px;
 }
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.timeline-label {
+  font-size: 0.78rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
 .timeline-circle {
   width: 18px;
   height: 18px;

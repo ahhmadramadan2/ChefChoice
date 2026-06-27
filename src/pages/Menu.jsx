@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+
 import DishCard from "../components/DishCard";
 import { Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
+import api from "../api/client";
 const ALL = "All";
 
 function Menu() {
@@ -17,6 +17,7 @@ function Menu() {
 
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [category, setCategory] = useState(ALL);
   const [maxPrice, setMaxPrice] = useState(30);
@@ -24,14 +25,29 @@ function Menu() {
   const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${API}/api/dishes`)
-      .then((res) => setDishes(Array.isArray(res.data) ? res.data : []))
-      .catch((err) => {
-        console.error("Failed to load dishes:", err);
+    async function loadDishes() {
+      setLoading(true);
+      setLoadError("");
+
+      try {
+       const res = await api.get("/api/dishes");
+        const data = Array.isArray(res.data) ? res.data : [];
+
+        setDishes(data);
+      } catch (err) {
+        console.error("Failed to load dishes from API:", err);
         setDishes([]);
-      })
-      .finally(() => setLoading(false));
+        setLoadError(
+          err?.response?.data?.message ||
+            err?.message ||
+            "Failed to load dishes from server."
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDishes();
   }, []);
 
   const tags = ["Vegan", "Vegetarian", "Gluten-free", "Spicy"];
@@ -108,6 +124,13 @@ function Menu() {
           </div>
         </div>
 
+        {/* Show API error (instead of silently using mock) */}
+        {!loading && loadError && (
+          <div className="auth-alert" style={{ marginBottom: "1rem" }}>
+            {loadError}
+          </div>
+        )}
+
         {/* Filters card */}
         <div className="menu-filters-card">
           <div className="filters">
@@ -130,7 +153,6 @@ function Menu() {
                       key={cat}
                       type="button"
                       className={`tag-chip cat-chip ${category === cat ? "active" : ""}`}
-
                       onClick={() => setCategory(cat)}
                     >
                       {cat}

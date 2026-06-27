@@ -1,24 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 
-const API = import.meta.env.VITE_API_URL;
 
 function MealBuilder() {
   const { addToCart } = useCart();
 
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-  const [tab, setTab] = useState("Main"); // Main | Side | Drink
+  const [tab, setTab] = useState("Main");
 
   const [mainId, setMainId] = useState("");
   const [sideId, setSideId] = useState("");
   const [drinkId, setDrinkId] = useState("");
 
-  // category filters
   const MAIN_CATS = [
     "All",
     "Breakfast",
@@ -46,23 +45,32 @@ function MealBuilder() {
 
   useEffect(() => {
     const fetchDishes = async () => {
+      setLoading(true);
+      setLoadError("");
+
       try {
-        const res = await axios.get(`${API}/api/dishes`, { withCredentials: true });
-        setDishes(Array.isArray(res.data) ? res.data : []);
-      } catch {
+       const res = await api.get("/api/dishes");
+        const data = Array.isArray(res.data) ? res.data : [];
+        setDishes(data);
+      } catch (err) {
+        console.error("Failed to load dishes for MealBuilder:", err);
         setDishes([]);
+        setLoadError(
+          err?.response?.data?.message ||
+            err?.message ||
+            "Failed to load dishes from server."
+        );
       } finally {
         setLoading(false);
       }
     };
+
     fetchDishes();
   }, []);
 
-  // base groups
   const mainsAll = useMemo(() => {
     const baseCats = MAIN_CATS.filter((x) => x !== "All");
     return dishes.filter((d) => baseCats.includes(d.category));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dishes]);
 
   const sidesAll = useMemo(
@@ -71,7 +79,6 @@ function MealBuilder() {
   );
   const drinksAll = useMemo(() => dishes.filter((d) => d.category === "Drinks"), [dishes]);
 
-  // filtered groups
   const mains = useMemo(
     () => (mainCat === "All" ? mainsAll : mainsAll.filter((d) => d.category === mainCat)),
     [mainsAll, mainCat]
@@ -85,15 +92,12 @@ function MealBuilder() {
     [drinksAll, drinkCat]
   );
 
-  // defaults after load
   useEffect(() => {
     if (!mainId && mainsAll[0]?.id) setMainId(String(mainsAll[0].id));
     if (!sideId && sidesAll[0]?.id) setSideId(String(sidesAll[0].id));
     if (!drinkId && drinksAll[0]?.id) setDrinkId(String(drinksAll[0].id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainsAll, sidesAll, drinksAll]);
+  }, [mainsAll, sidesAll, drinksAll, mainId, sideId, drinkId]);
 
-  // keep selection valid when filtering
   useEffect(() => {
     if (mains.length && !mains.some((x) => String(x.id) === String(mainId))) {
       setMainId(String(mains[0].id));
@@ -166,6 +170,25 @@ function MealBuilder() {
           <div className="mb-hero">
             <h1>Build Your Meal</h1>
             <p className="mb-sub">Loading dishes…</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <section className="page">
+        <div className="container">
+          <div className="mb-hero">
+            <h1>Build Your Meal</h1>
+            <p className="mb-sub">Could not load dishes from the backend.</p>
+            <div className="auth-alert" style={{ marginTop: 12 }}>
+              {loadError}
+            </div>
+            <Link to="/menu" className="btn-primary" style={{ marginTop: 12 }}>
+              Go to Menu
+            </Link>
           </div>
         </div>
       </section>
