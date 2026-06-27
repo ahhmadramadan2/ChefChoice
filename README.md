@@ -1,46 +1,47 @@
 # ChefChoice
 
-ChefChoice is a full-stack restaurant web application built as a university project, designed in a **production-style** architecture with a focus on clean UI, realistic features, and professional code structure.
+A full-stack restaurant ordering and management platform.
 
-This monorepo contains both:
+🌐 **Live demo:** https://chef-choice-eight.vercel.app
 
-- **Frontend:** React (Vite) single-page application
-- **Backend:** Node.js + Express REST API with MySQL and session-based authentication
+## Features
 
----
+- Browse menu, filter by category/diet/price, build custom meal combos
+- JWT authentication with saved delivery addresses
+- Real-time order tracking through 6 stages
+- Admin dashboard for managing dishes and orders
+- Customer notes on orders
 
-## ✨ Features
+## Tech Stack
 
-### Frontend (React + Vite)
+- **Frontend:** React 19 + Vite, deployed on Vercel
+- **Backend:** Node.js + Express, deployed on Render
+- **Database:** PostgreSQL via Supabase
+- **Auth:** JWT with bcrypt-equivalent password hashing (Node crypto scrypt)
 
-- Modern single-page application using **React** and **React Router**
-- **Custom UI/UX** (no UI libraries) with responsive layout
-- **Cart** using Context API
-- **Meal Builder** to compose a custom meal from mains, sides, and drinks
-- **Auth pages** (Login / Signup) connected to backend
-- **Contact form** (demo / or API-backed)
-- Smooth navigation and polished design suitable for portfolio / CV
+## Architecture
 
-### Backend (Node.js + Express)
+[Frontend (Vercel)] → [API (Render)] → [Postgres (Supabase)]
 
-- REST API with the following route groups:
+## Local development
 
-  - `/api/auth` – register, login, logout, session handling
-  - `/api/dishes` – list menu items, fetch single dish, etc.
-  - `/api/orders` – create orders, store in database
-  - `/api/contact` – store contact messages
+\`\`\`bash
+# Clone
+git clone https://github.com/yourusername/chef-choice
+cd chef-choice
 
-- **Session-based authentication** (no JWT) using cookies
-- Custom **middleware** for auth and error handling
-- Centralised DB config and structured routes
+# Frontend
+npm install
+npm run dev
 
-### Database (MySQL)
+# Backend (in a separate terminal)
+cd backend
+npm install
+npm run dev
+\`\`\`
 
-- Database: `chefchoice`
-- Core tables (examples):
-  - `users`
-  - `dishes`
-  - `orders`
-  - `order_items`
-  - `contact_messages`
-- Backend already connected and inserting data (orders, users, etc.)
+Requires a `.env` in root with `VITE_API_URL` and a `.env` in `backend/` with `DATABASE_URL`, `JWT_SECRET`, etc.
+
+## Author
+
+Built as a personal full-stack project.
