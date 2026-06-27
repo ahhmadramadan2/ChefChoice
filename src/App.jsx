@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -13,34 +11,26 @@ import Menu from "./pages/Menu";
 import DishDetails from "./pages/DishDetails";
 import MealBuilder from "./pages/MealBuilder";
 import Cart from "./pages/Cart";
-
-// NEW pages (you must create these files)
+import AdminDishes from "./pages/AdminDishes";
+import AdminOrders from "./pages/AdminOrders";
+import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
-const API = import.meta.env.VITE_API_URL;
+import { useAuth } from "./context/AuthContext";
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== "admin") return <Navigate to="/" replace />;
+  return children;
+}
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  // Keep user logged in on refresh (session cookie)
-  useEffect(() => {
-  axios
-    .get(`${API}/api/auth/me`, { withCredentials: true })
-    .then((res) => {
-      // Only accept a real user object
-      if (res.data && typeof res.data === "object" && res.data.id) {
-        setUser(res.data);
-      } else {
-        setUser(null);
-      }
-    })
-    .catch(() => setUser(null));
-}, []);
-
   return (
     <div className="app">
-      <Navbar user={user} setUser={setUser} />
+      <Navbar />
 
       <main className="main-content">
         <Routes>
@@ -53,9 +43,33 @@ function App() {
           <Route path="/builder" element={<MealBuilder />} />
           <Route path="/cart" element={<Cart />} />
 
-          {/* NEW auth routes */}
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/signup" element={<Signup setUser={setUser} />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/dishes"
+            element={
+              <AdminRoute>
+                <AdminDishes />
+              </AdminRoute>
+            }
+          />
+          <Route
+  path="/admin/orders"
+  element={
+    <AdminRoute>
+      <AdminOrders />
+    </AdminRoute>
+  }
+/>
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </main>
 
