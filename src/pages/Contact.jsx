@@ -1,7 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
+import api from "../api/client";
 
 function Contact() {
   const [form, setForm] = useState({
@@ -27,11 +25,7 @@ function Contact() {
     setSubmitting(true);
 
     try {
-      await axios.post(
-        `${API}/api/contact`,
-        form,
-        { withCredentials: true } // keep consistent with session auth
-      );
+      await api.post("/api/contact", form);
 
       setStatus("✅ Thank you! Your message has been sent to the restaurant.");
       setForm({

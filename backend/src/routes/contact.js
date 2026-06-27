@@ -6,7 +6,7 @@ import { pool } from "../config/db.js";
 const router = express.Router();
 
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, 
+  windowMs: 10 * 60 * 1000,
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
@@ -29,20 +29,21 @@ router.post("/", limiter, async (req, res) => {
     return res.status(400).json({ message: "Message is too long." });
   }
 
-  // 1) Store in MySQL
+  // 1) Save to Postgres
   let insertId = null;
   try {
-    const [result] = await pool.query(
-      "INSERT INTO contact_messages (name, email, topic, message) VALUES (?, ?, ?, ?)",
+    const result = await pool.query(
+      `INSERT INTO contact_messages (name, email, topic, message)
+       VALUES ($1, $2, $3, $4) RETURNING id`,
       [name.trim(), email.trim(), topic.trim(), String(message).trim()]
     );
-    insertId = result.insertId;
+    insertId = result.rows[0].id;
   } catch (dbErr) {
     console.error("DB insert failed:", dbErr);
     return res.status(500).json({ message: "Database error saving message." });
   }
 
-  // 2) Email notification (optional)
+  // 2) Optionally send email notification (only if SMTP is configured)
   try {
     const hasSMTP =
       process.env.SMTP_HOST &&
@@ -57,28 +58,24 @@ router.post("/", limiter, async (req, res) => {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
         secure: String(process.env.SMTP_SECURE) === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
       });
 
       await transporter.sendMail({
         from: process.env.CONTACT_FROM_EMAIL,
         to: process.env.CONTACT_TO_EMAIL,
         replyTo: email.trim(),
-        subject: `[ChefChoice] New Contact: ${topic}`,
+        subject: `[ChefChoice] ${topic}`,
         text:
           `New contact message\n\n` +
           `Name: ${name}\nEmail: ${email}\nTopic: ${topic}\n\n` +
           `Message:\n${message}\n\n` +
           `Message ID: ${insertId}`,
       });
-    } else {
-      console.warn("SMTP not configured → skipping email notification");
     }
   } catch (mailErr) {
     console.error("Email send failed (message still saved):", mailErr.message);
+    // Don't fail the request — the message is in the DB.
   }
 
   return res.status(201).json({

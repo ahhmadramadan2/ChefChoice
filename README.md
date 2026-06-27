@@ -26,15 +26,19 @@ A full-stack restaurant ordering and management platform.
 ## Local development
 
 \`\`\`bash
+
 # Clone
+
 git clone https://github.com/yourusername/chef-choice
 cd chef-choice
 
 # Frontend
+
 npm install
 npm run dev
 
 # Backend (in a separate terminal)
+
 cd backend
 npm install
 npm run dev

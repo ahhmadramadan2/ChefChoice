@@ -16,6 +16,7 @@ import AdminOrders from "./pages/AdminOrders";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminMessages from "./pages/AdminMessages";
 
 import { useAuth } from "./context/AuthContext";
 
@@ -67,7 +68,14 @@ function App() {
     </AdminRoute>
   }
 />
-
+<Route
+  path="/admin/messages"
+  element={
+    <AdminRoute>
+      <AdminMessages />
+    </AdminRoute>
+  }
+/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>

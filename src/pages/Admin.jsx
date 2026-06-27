@@ -6,23 +6,27 @@ function Admin() {
   const [stats, setStats] = useState({ orders: 0, pending: 0, dishes: 0 });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const [orders, dishes] = await Promise.all([
-          api.get("/api/admin/orders"),
-          api.get("/api/dishes"),
-        ]);
-        const pending = orders.data.filter(
-          (o) => !["delivered", "cancelled"].includes(o.status)
-        ).length;
-        setStats({
-          orders: orders.data.length,
-          pending,
-          dishes: dishes.data.length,
-        });
-      } catch {/* ignore */}
-    })();
-  }, []);
+  (async () => {
+    try {
+      const [orders, dishes, messages] = await Promise.all([
+        api.get("/api/admin/orders"),
+        api.get("/api/dishes"),
+        api.get("/api/admin/messages"),
+      ]);
+      const pending = orders.data.filter(
+        (o) => !["delivered", "cancelled"].includes(o.status)
+      ).length;
+      const unread = messages.data.filter((m) => !m.is_read).length;
+      setStats({
+        orders: orders.data.length,
+        pending,
+        dishes: dishes.data.length,
+        messages: messages.data.length,
+        unread,
+      });
+    } catch {/* ignore */}
+  })();
+}, []);
 
   return (
     <section className="page">
@@ -51,6 +55,14 @@ function Admin() {
               Add, edit, and remove menu items
             </div>
           </Link>
+          <Link to="/admin/messages" className="cart-summary-card" style={{ textDecoration: "none" }}>
+  <h2 className="cart-section-title">Messages</h2>
+  <div className="summary-row"><span>Unread</span><strong>{stats.unread || 0}</strong></div>
+<div className="summary-row"><span>Total</span><strong>{stats.messages || 0}</strong></div>
+  <div className="summary-note" style={{ marginTop: 8 }}>
+    Read and reply to customer messages
+  </div>
+</Link>
         </div>
       </div>
     </section>
